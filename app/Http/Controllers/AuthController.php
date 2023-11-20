@@ -13,15 +13,15 @@ class AuthController extends Controller
         $credenciais = $request->all(['cpf', 'password']);
 
         $validation  = validator::make($credenciais, [
-            'cpf'    => 'required',
+            'cpf'    => 'required|string|max:11',
             'password' => 'required|min:6|max:15'
         ]);
 
-        if($validation->fails()) return response()->json(['status' => false, 'message' => 'E-mail ou Senha Inválida'], 403);
+        if($validation->fails()) return response()->json(['status' => false, 'message' => 'E-mail E Senha Obrigatório'], 403);
 
         $token = auth('api')->attempt($credenciais);
 
-        if(!$token) return response()->json(['status' => false, 'message' => 'E-mail ou Senha Inválida'], 403);
+        if(!$token) return response()->json(['status' => false, 'message' => 'E-mail ou Senha Inválida teste'], 403);
 
         return response()->json(['status' => true, 'token' => $token, 'message' => 'Seja bem-vindo ao Portal Jus']);
     }
