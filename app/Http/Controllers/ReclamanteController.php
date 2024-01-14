@@ -13,39 +13,47 @@ class ReclamanteController extends Controller
     private $email;
     private $cpf;
     private $phone;
-
     protected $returnHTTP;
     protected $message;
 
     public function cadastrarReclamante(Request $request)
     {
+
+        $dadosReclamante  = [
+            'reclamante'    =>  $this->reclamante = $request->input('reclamante'),
+            'email'         =>  $this->email      = $request->input('email'),
+            'cpf'           =>  $this->cpf        = $request->input('cpf'),
+            'phone'         =>  $this->phone      = $request->input('phone'),
+        ];
+
         $status   = null;
         $response = [];
 
         try {
 
-            $validation = Validator::make($request->all(), [
+            $validation = Validator::make($dadosReclamante, [
                 'reclamante' => 'required|max:100|string',
-                'cpf'        => 'required|max:11|string',
                 'phone'      => 'required|max:11|string',
             ]);
 
-            $verifiqueReclamante = Reclamante::where('reclamante', $request->input('reclamante'))->exists();
-            $verifiqueCpf        = Reclamante::where('reclamante', $request->input('cpf'))->exists();
+            $verificaReclamante   = Reclamante::where('reclamante', $dadosReclamante['reclamante'])->exists();
 
-            if ($verifiqueReclamante || $verifiqueCpf) {
-                $this->returnHTTP = true;
-                $this->message    = 'Usuário já cadastrado';
+            if ($verificaReclamante) {
+                $this->returnHTTP = false;
+                $this->message    = 'Reclamante se encontra como cadastrado no Portal';
+                $status           = 400;
             }else{
-                Reclamante::create($request->all());
+                $this->returnHTTP = true;
+                $this->message    = 'Reclamante cadastrado com sucesso';
+                $status           = 200;
+
+                Reclamante::create($dadosReclamante);
             }
 
             $response = [
-                'status'    => true,
-                'message'   => 'Reclamante criado com sucesso'
+                'status'    => $this->returnHTTP,
+                'message'   => $this->message
             ];
-
-            $status = 200;
 
         } catch (QueryException $e) {
 
@@ -54,7 +62,7 @@ class ReclamanteController extends Controller
                 'message'   => 'Erro ao Cadastrar o reclamante'
             ];
 
-            $status = 401;
+            $status = 400;
 
         } catch (\Exception $e) {
 
@@ -63,7 +71,7 @@ class ReclamanteController extends Controller
                 'message'   => 'Erro ao Cadastrar o reclamante'
             ];
 
-            $status = 401;
+            $status = 400;
         }
 
         return response()->json($response, $status);
