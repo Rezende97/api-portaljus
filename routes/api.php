@@ -2,9 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ReclamanteController;
 use App\Http\Controllers\UserController;
+
+use App\Http\Controllers\ProcessoController;
+use App\Http\Controllers\ReclamanteController;
+use App\Http\Controllers\ReclamadaController;
+
+use App\Http\Controllers\StatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,5 +38,11 @@ Route::prefix('/user')->middleware('jwt.auth')->group(function(){
 });
 
 Route::prefix('/processo')->middleware('jwt.auth')->group(function(){
-    Route::post('reclamante', [ReclamanteController::class, 'cadastrarReclamante'])->name('reclamante.create');
+    Route::post('registeReclamante', [ReclamanteController::class, 'cadastrarReclamante'])->name('registeReclamante.create');
+    Route::post('registeReclamada',  [ReclamadaController::class, 'cadastraReclamada'])->name('registeReclamada.create');
+    Route::post('registeProcesso',   [ProcessoController::class, 'cadastrarProcesso'])->name('registeProcesso.create');
+});
+
+Route::prefix('/audiencia')->middleware('jwt.auth')->group(function(){
+    Route::post('registeStatus', [StatusController::class, 'registerStatus'])->name('registerStatus.create');
 });

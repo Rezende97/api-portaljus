@@ -18,7 +18,6 @@ class ReclamanteController extends Controller
 
     public function cadastrarReclamante(Request $request)
     {
-
         $dadosReclamante  = [
             'reclamante'    =>  $this->reclamante = $request->input('reclamante'),
             'email'         =>  $this->email      = $request->input('email'),
@@ -45,7 +44,7 @@ class ReclamanteController extends Controller
             }else{
                 $this->returnHTTP = true;
                 $this->message    = 'Reclamante cadastrado com sucesso';
-                $status           = 200;
+                $status           = 201;
 
                 Reclamante::create($dadosReclamante);
             }
