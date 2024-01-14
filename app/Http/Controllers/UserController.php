@@ -25,7 +25,7 @@ class UserController extends Controller
             'name'      => 'required|max:50|string',
             'email'     => 'required|email',
             'cpf'       => 'required|max:11|string',
-            'telefone'  => 'required|max:11|string',
+            'phone'  => 'required|max:11|string',
             'password'  => 'required|min:6|max:15|string',
         ]);
 
@@ -35,8 +35,9 @@ class UserController extends Controller
             'name'      => $request->all()["name"],
             'email'     => $request->all()["email"],
             'cpf'       => $request->all()["cpf"],
-            'telefone'  => $request->all()["telefone"],
+            'phone'     => $request->all()["phone"],
             'password'  => bcrypt($request->all()["password"]),
+            'status_desativado' => 0
         ];
 
         $check = User::where('cpf', $user["cpf"])->orWhere('email', $user["email"])->exists();

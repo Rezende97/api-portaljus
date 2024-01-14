@@ -13,7 +13,7 @@ class AuthController extends Controller
         $credenciais = $request->all(['cpf', 'password']);
 
         $validation  = validator::make($credenciais, [
-            'cpf'    => 'required|string|max:11',
+            'cpf'      => 'required|string|max:11',
             'password' => 'required|min:6|max:15'
         ]);
 

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReclamanteController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -27,5 +28,9 @@ Route::prefix('/auth')->middleware('jwt.auth')->group(function(){
 });
 
 Route::prefix('/user')->middleware('jwt.auth')->group(function(){
-    Route::post('create', [UserController::class, 'create'])->name('auth.logout');
+    Route::post('create', [UserController::class, 'create'])->name('user.create');
+});
+
+Route::prefix('/processo')->middleware('jwt.auth')->group(function(){
+    Route::post('reclamante', [ReclamanteController::class, 'cadastrarReclamante'])->name('reclamante.create');
 });
