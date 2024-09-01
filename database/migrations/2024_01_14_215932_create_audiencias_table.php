@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('audiencias', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_processo');
             $table->unsignedBigInteger('id_tipo_audiencia');
-            $table->unsignedBigInteger('id_vara');
-            $table->unsignedBigInteger('id_regiao');
+            $table->unsignedBigInteger('id_varas');
+            $table->unsignedBigInteger('id_regiaos');
             $table->unsignedBigInteger('id_adv');
             $table->unsignedBigInteger('id_status');
             $table->timestamp('data_horario_audiencia');
+            $table->integer('finished')->default(0);
             $table->timestamps();
         });
     }

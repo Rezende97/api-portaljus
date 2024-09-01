@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProcessoRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\QueryException;
@@ -14,7 +15,7 @@ class ProcessoController extends Controller
     private $id_reclamada;
     private $observacao;
 
-    public function cadastrarProcesso(Request $request)
+    public function cadastrarProcesso(ProcessoRequest $request)
     {
         $dadosProcesso = [
             'num_processo'  => $this->num_processo  = $request->input('num_processo'),
@@ -28,23 +29,14 @@ class ProcessoController extends Controller
 
         try {
 
-            $validation = Validator::make($dadosProcesso, [
-                'num_processo'   =>  'required|string|max:200',
-                'id_reclamante'  =>  'required',
-                'id_reclamada'   =>  'required',
-            ]);
+            Processos::create($dadosProcesso);
+            
+            $response = [
+                'status'    => true,
+                'message'   => 'Processo cadastrado com sucesso'
+            ];
 
-            if ($validation->fails()) {
-                return response()->json(['status' => false, 'message' => 'Obrigatório preencher todos os campos'], 400);
-            }else{
-                Processos::create($dadosProcesso);
-                $response = [
-                    'status'    => true,
-                    'message'   => 'Processo cadastrado com sucesso'
-                ];
-
-                $status = 201;
-            }
+            $status = 201;
 
 
         } catch (QueryException $e) {
@@ -67,5 +59,10 @@ class ProcessoController extends Controller
         }
 
         return response()->json($response, $status);
+    }
+
+    public function listProcesso()
+    {
+
     }
 }

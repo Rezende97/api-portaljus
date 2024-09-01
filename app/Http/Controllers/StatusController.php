@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Status;
+use App\Http\Funcoes\Validation;
 
 class StatusController extends Controller
 {
@@ -12,20 +13,23 @@ class StatusController extends Controller
 
     public function registerStatus(Request $request)
     {
-        $dadoStatus = [
-            'status'    => $this->status = $request->input('status')
-        ];
 
-        $validator = Validator::make($dadoStatus, [
-            'status'    =>  'required|string'
+        $validacao = Validation::validationData($request->all(), [
+            'status'    =>  'required|string|max:150'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => 'Erro ao cadastrar o status'], 400);
-        }
+        if (!$validacao) return response()->json(['error' => true, 'message' => 'Erro ao cadastrar o status'], 401)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
 
-        Status::create($dadoStatus);
+        $validationExist = Status::where('status', $request['status'])->exists();
 
-        return response()->json(['status' => true, 'message' => 'Status cadastrado com sucesso'], 201);
+        if ($validationExist) return response()->json(['error' => true, 'message' => 'O status, já está cadastrado'], 401)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+
+        $status = [
+            'status'  => strtolower($request['status'])
+        ];
+
+        Status::create($status);
+
+        return response()->json(['error' => false, 'message' => 'Status cadastrado com sucesso'], 201)->setEncodingOptions(JSON_UNESCAPED_UNICODE);
     }
 }

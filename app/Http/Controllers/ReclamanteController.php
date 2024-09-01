@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReclamanteRequest;
 use Illuminate\Http\Request;
 use App\Models\Reclamante;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,7 @@ class ReclamanteController extends Controller
     protected $returnHTTP;
     protected $message;
 
-    public function cadastrarReclamante(Request $request)
+    public function cadastrarReclamante(ReclamanteRequest $request)
     {
         $dadosReclamante  = [
             'reclamante'    =>  $this->reclamante = $request->input('reclamante'),
@@ -29,11 +30,6 @@ class ReclamanteController extends Controller
         $response = [];
 
         try {
-
-            $validation = Validator::make($dadosReclamante, [
-                'reclamante' => 'required|max:100|string',
-                'phone'      => 'required|max:11|string',
-            ]);
 
             $verificaReclamante   = Reclamante::where('reclamante', $dadosReclamante['reclamante'])->exists();
 
@@ -74,5 +70,21 @@ class ReclamanteController extends Controller
         }
 
         return response()->json($response, $status);
+    }
+
+    public function listReclamante()
+    {
+        $reclamadas      = Reclamante::all();
+
+        $data_reclamante  = [];
+
+        foreach ($reclamadas->toArray() as $key => $reclamante) {
+            array_push($data_reclamante, [
+                'id'    => $reclamante["id"],
+                'reclamada' => ucwords(strtolower($reclamante["reclamante"]))
+            ]);
+        }
+
+        return response()->json($data_reclamante);
     }
 }
